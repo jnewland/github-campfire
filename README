@@ -1,0 +1,14 @@
+github-campfire
+===============
+
+Toss your github pushes to Campfire
+
+requirements
+============
+sudo gem install json tinder sinatra
+
+instructions
+============
+cp config.yml.example config.yml
+vim config.yml
+ruby github-campfire.rb
