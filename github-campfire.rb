@@ -31,7 +31,6 @@ class GithubCampfire
       commit
     end
     @room.speak(@template.result(proc))
-    speak(@template.result(proc))
   end
   
 end
