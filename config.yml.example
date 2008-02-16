@@ -1,0 +1,12 @@
+repo-name:
+  subdomain: chattastic
+  username: campfire-user@foo.com
+  password: p00p
+  room: "My Awesome Room"
+  template: "[<%= commit['repo'] %>] <%= commit['message'] %> - <%= commit['author']['name'] %> (<%= commit['url'] %>)"
+repo-name-2:
+  subdomain: chattastic
+  username: campfire-user@foo.com
+  password: p00p
+  room: "My Awesome Room 2"
+  #template: if template is ommitted, a default will be used
