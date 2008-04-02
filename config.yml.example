@@ -1,5 +1,6 @@
 repo-name:
   subdomain: chattastic
+  ssl: true
   username: campfire-user@foo.com
   password: p00p
   room: "My Awesome Room"

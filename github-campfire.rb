@@ -19,7 +19,7 @@ class GithubCampfire
   
   def connect(repo)
     credentials = REPOS[repo]
-    campfire = Tinder::Campfire.new(credentials['subdomain'])
+    campfire = Tinder::Campfire.new(credentials['subdomain'], :ssl => credentials['ssl'] || false)
     campfire.login(credentials['username'], credentials['password'])
     return campfire.find_room_by_name(credentials['room'])
   end
