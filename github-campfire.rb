@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'JSON'
+require 'json'
 require 'tinder'
 require 'sinatra'
 require 'erb'
@@ -19,7 +19,13 @@ class GithubCampfire
   
   def connect(repo)
     credentials = REPOS[repo]
-    campfire = Tinder::Campfire.new(credentials['subdomain'], :ssl => credentials['ssl'] || false)
+    
+    # generate Tinder options
+    options = {}
+    options[:ssl] = credentials['ssl'] || false
+    options[:proxy] = credentials['proxy'] || ENV[options[:ssl] ? 'https_proxy' : 'http_proxy']
+    
+    campfire = Tinder::Campfire.new(credentials['subdomain'], options)
     campfire.login(credentials['username'], credentials['password'])
     return campfire.find_room_by_name(credentials['room'])
   end
