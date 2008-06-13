@@ -7,14 +7,45 @@ require 'erb'
 REPOS = YAML.load_file('config.yml')
 
 class GithubCampfire
+  attr_reader :repo
   
-  def initialize(payload)
+  DEFAULT_TEMPLATE = "[<%= commit['repo'] %>] <%= commit['message'] %> - <%= commit['author']['name'] %> (<%= commit['url'] %>)".freeze
+  
+  def initialize(payload=nil)
+    process_payload(payload) if payload
+  end
+  
+  def process_payload(payload)
     payload = JSON.parse(payload)
     return unless payload.keys.include?("repository")
     @repo = payload["repository"]["name"]
-    @template = ERB.new(REPOS[@repo]["template"] || "[<%= commit['repo'] %>] <%= commit['message'] %> - <%= commit['author']['name'] %> (<%= commit['url'] %>)")
+    
     @room = connect(@repo)
     payload["commits"].each { |c| process_commit(c.last) }
+  end
+  
+  def credentials
+    @credentials ||= REPOS[@repo]
+  end
+  
+  def template
+    @template ||= template_for(credentials['template'])
+  end
+  
+  def template_for(raw)
+    case raw
+    when String
+      template_for(:speak => raw)
+    when Array
+      raw.map { |l| template_for(l) }.flatten
+    when Hash
+      method, content = Array(raw).first
+      {method => content.is_a?(String) ? ERB.new(content) : content}
+    when nil, ''
+      template(DEFAULT_TEMPLATE)
+    else
+      raise ArgumentError, "Invalid template #{raw.inspect}"
+    end
   end
   
   def connect(repo)
@@ -36,7 +67,10 @@ class GithubCampfire
     proc = Proc.new do 
       commit
     end
-    @room.speak(@template.result(proc))
+    template.each do |action|
+      method, content = Array(action).first
+      @room.send(method, content.result(proc), :join => false)
+    end
   end
   
 end
