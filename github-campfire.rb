@@ -4,7 +4,7 @@ require 'tinder'
 require 'sinatra'
 require 'erb'
 
-REPOS = YAML.load_file('config.yml')
+REPOS = YAML.load_file(ENV['CONFIG'] || 'config.yml')
 
 class GithubCampfire
   attr_reader :repo
