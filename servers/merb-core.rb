@@ -3,7 +3,7 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'github-campfire')
 
 Merb::Router.prepare do |r|
-  r.match('/', :method => 'POST').to(:controller => 'campfire', :action =>'index')
+  r.match('/', :method => :post).to(:controller => 'campfire', :action =>'index')
 end
 
 class Campfire < Merb::Controller
