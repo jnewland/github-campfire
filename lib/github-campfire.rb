@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'json'
 require 'tinder'
-require 'sinatra'
 require 'erb'
 
 REPOS = YAML.load_file(ENV['CONFIG'] || 'config.yml')
@@ -73,9 +72,4 @@ class GithubCampfire
     end
   end
   
-end
-
-post '/' do
-  GithubCampfire.new(params[:payload])
-  "OMGPONIES! IT WORKED"
 end
