@@ -5,10 +5,13 @@ Toss your github pushes to Campfire
 
 requirements
 ============
-sudo gem install json tinder sinatra
+sudo gem install json tinder (sinatra|merb-core)
 
 instructions
 ============
 cp config.yml.example config.yml
 vim config.yml
-ruby github-campfire.rb
+# sinatra
+ruby servers/sinatra.rb
+# merb-core
+merb -I servers/merb-core.rb
