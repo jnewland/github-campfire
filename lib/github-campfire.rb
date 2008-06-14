@@ -20,7 +20,7 @@ class GithubCampfire
     @repo = payload["repository"]["name"]
     
     @room = connect(@repo)
-    payload["commits"].each { |c| process_commit(c.last) }
+    payload["commits"].sort_by { |id,c| c["timestamp"] }.each { |id,c| process_commit(c) }
   end
   
   def credentials
