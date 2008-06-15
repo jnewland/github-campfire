@@ -23,12 +23,19 @@ class GithubCampfire
     payload["commits"].sort_by { |id,c| c["timestamp"] }.each { |id,c| process_commit(c) }
   end
   
-  def credentials
-    @credentials ||= REPOS[@repo]
+  def settings(repo=@repo)
+    case s = REPOS[repo.to_s]
+    when Hash
+      return s
+    when String, Symbol
+      return settings(s)
+    else
+      raise "No settings found for repo=#{repo.inspect}"
+    end
   end
   
   def template
-    @template ||= template_for(credentials['template'])
+    @template ||= template_for(settings['template'])
   end
   
   def template_for(raw)
@@ -48,16 +55,16 @@ class GithubCampfire
   end
   
   def connect(repo)
-    credentials = REPOS[repo]
+    settings = REPOS[repo]
     
     # generate Tinder options
     options = {}
-    options[:ssl] = credentials['ssl'] || false
-    options[:proxy] = credentials['proxy'] || ENV[options[:ssl] ? 'https_proxy' : 'http_proxy']
+    options[:ssl] = settings['ssl'] || false
+    options[:proxy] = settings['proxy'] || ENV[options[:ssl] ? 'https_proxy' : 'http_proxy']
     
-    campfire = Tinder::Campfire.new(credentials['subdomain'], options)
-    campfire.login(credentials['username'], credentials['password'])
-    return campfire.find_room_by_name(credentials['room'])
+    campfire = Tinder::Campfire.new(settings['subdomain'], options)
+    campfire.login(settings['username'], settings['password'])
+    return campfire.find_room_by_name(settings['room'])
   end
   
   def process_commit(commit)
