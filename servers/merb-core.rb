@@ -14,6 +14,7 @@ class Campfire < Merb::Controller
     rescue => e
       self.status = 500
       return "An exception has occurred posting the payload to Campfire:\n" +
+             "  #{e.message}\n" + 
              e.backtrace.map {|frame| "  #{frame}"}.join("\n")
     end
   end
