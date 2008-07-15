@@ -3,8 +3,6 @@ require 'json'
 require 'tinder'
 require 'erb'
 
-REPOS = YAML.load_file(ENV['CONFIG'] || 'config.yml')
-
 class GithubCampfire
   attr_reader :repo
   
@@ -12,6 +10,7 @@ class GithubCampfire
   
   def initialize(payload=nil)
     process_payload(payload) if payload
+    @repos = YAML.load_file(ENV['CONFIG'] || 'config.yml')
   end
   
   def process_payload(payload)
@@ -24,13 +23,14 @@ class GithubCampfire
   end
   
   def settings(repo=@repo)
-    case s = REPOS[repo.to_s]
+    case s = @repos[repo.to_s]
     when Hash
       return s
     when String, Symbol
       return settings(s)
     else
-      raise "No settings found for repo=#{repo.inspect}"
+      raise "No settings found for repo=#{repo.inspect}" if repo.to_s == 'default'
+      return settings(:default)
     end
   end
   
@@ -55,8 +55,6 @@ class GithubCampfire
   end
   
   def connect(repo)
-    settings = REPOS[repo]
-    
     # generate Tinder options
     options = {}
     options[:ssl] = settings['ssl'] || false
