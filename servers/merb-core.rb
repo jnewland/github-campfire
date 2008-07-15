@@ -8,8 +8,14 @@ end
 
 class Campfire < Merb::Controller
   def index
-    GithubCampfire.new(params[:payload])
-    "OMGPONIES! IT WORKED"
+    begin
+      GithubCampfire.new(params[:payload])
+      "OMGPONIES! IT WORKED"
+    rescue => e
+      self.status = 500
+      return "An exception has occurred posting the payload to Campfire:\n" +
+             e.backtrace.map {|frame| "  #{frame}"}.join("\n")
+    end
   end
 end
 
