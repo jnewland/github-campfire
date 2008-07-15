@@ -9,8 +9,8 @@ class GithubCampfire
   DEFAULT_TEMPLATE = "[<%= commit['repo'] %>] <%= commit['message'] %> - <%= commit['author']['name'] %> (<%= commit['url'] %>)".freeze
   
   def initialize(payload=nil)
-    process_payload(payload) if payload
     @repos = YAML.load_file(ENV['CONFIG'] || 'config.yml')
+    process_payload(payload) if payload
   end
   
   def process_payload(payload)
