@@ -19,7 +19,16 @@ class GithubCampfire
     @repo = payload["repository"]["name"]
     
     @room = connect(@repo)
-    payload["commits"].sort_by { |id,c| c["timestamp"] }.each { |id,c| process_commit(c) }
+    commits = payload["commits"]
+    if commits.is_a?(Hash)
+      # old-style github commits object, convert to array
+      commits = commits.map do |id,c|
+        c["id"] = id
+        c
+      end
+    end
+    
+    commits.sort_by { |c| c["timestamp"] }.each { |c| process_commit(c) }
   end
   
   def settings(repo=@repo)
